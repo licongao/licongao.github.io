@@ -17,22 +17,24 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"lcarecordlife.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="中科大的侯老师给我布置了这几个任务：1. 什么是spin Hall effect2. 光子为什么会有spin Hall effect，和电子的spin Hall effect有什么不同3. 中科大这些同学的实验和文献中的结果相比，哪个信噪比更好？如果定量评价实验的信噪比？同时给了我几篇参考文献，进行学习，虽然我不去中科大了，但是这个任务我还是决定做一做，毕竟假期闲来无事。首先需要解释的就是：1、霍">
 <meta property="og:type" content="article">
 <meta property="og:title" content="霍尔效应">
-<meta property="og:url" content="http://example.com/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/index.html">
+<meta property="og:url" content="https://lcarecordlife.cn/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/index.html">
 <meta property="og:site_name" content="杂记">
 <meta property="og:description" content="中科大的侯老师给我布置了这几个任务：1. 什么是spin Hall effect2. 光子为什么会有spin Hall effect，和电子的spin Hall effect有什么不同3. 中科大这些同学的实验和文献中的结果相比，哪个信噪比更好？如果定量评价实验的信噪比？同时给了我几篇参考文献，进行学习，虽然我不去中科大了，但是这个任务我还是决定做一做，毕竟假期闲来无事。首先需要解释的就是：1、霍">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-25T15:03:26.000Z">
-<meta property="article:modified_time" content="2022-08-26T03:30:12.777Z">
+<meta property="article:modified_time" content="2026-07-20T15:18:27.233Z">
 <meta property="article:author" content="李从奥">
+<meta property="article:tag" content="霍尔效应">
+<meta property="article:tag" content="物理">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/">
+<link rel="canonical" href="https://lcarecordlife.cn/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/">
 
 
 <script id="page-configurations">
@@ -118,6 +120,16 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
@@ -151,7 +163,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/">
+    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2022/08/25/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -176,6 +188,15 @@
 
               <time title="创建时间：2022-08-25 23:03:26" itemprop="dateCreated datePublished" datetime="2022-08-25T23:03:26+08:00">2022-08-25</time>
             </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -184,6 +205,20 @@
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -224,6 +259,10 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9C%8D%E5%B0%94%E6%95%88%E5%BA%94/" rel="tag"># 霍尔效应</a>
+              <a href="/tags/%E7%89%A9%E7%90%86/" rel="tag"># 物理</a>
+          </div>
 
         
 
@@ -314,9 +353,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -342,18 +393,24 @@
 <div class="copyright">
   
   &copy; 2021-9-15 – 
-  <span itemprop="copyrightYear">2025</span>
+  <span itemprop="copyrightYear">2026</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">李从奥</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">18k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">17 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共14.9k字</span>
-</div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 

@@ -158,6 +158,88 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/08/12/%E6%83%85%E6%84%9F%E8%AF%86%E5%88%ABAI%E5%A4%A7%E8%B5%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="李从奥">
+      <meta itemprop="description" content="李从奥的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杂记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/12/%E6%83%85%E6%84%9F%E8%AF%86%E5%88%ABAI%E5%A4%A7%E8%B5%9B/" class="post-title-link" itemprop="url">情感识别AI大赛</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-12 22:37:00 / 修改时间：22:56:29" itemprop="dateCreated datePublished" datetime="2026-08-12T22:37:00+08:00">2026-08-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E4%BD%9C%E6%94%AF%E7%BA%BF%E4%BB%BB%E5%8A%A1/" itemprop="url" rel="index"><span itemprop="name">工作支线任务</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>567</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近一个星期进行了情感识别的AI大赛，比赛内容是进行10分类，指标看宏F1，不允许使用带有情感数据或者任务的预训练模型。最后结果不尽人意，没有取得前三名，看到前面人的方法，更是让我大吃一惊。<br>先说我的思路，既然是中英文的二分类问题，我是考虑训练一个语种分类的模型进行二分类（这个正确率一般都非常高，超过99%），后续用中文和英文训练集分别训练两个不同的模型，分别在各自的语种上面达到最好的效果，窃以为非常巧妙，实则效果不如其他人，百思不得其解，也尝试了很多模型，hubert wav2vec whisper wavlm等等等，在中文上可以达到很好的效果，但是英文上怎么样也不行，验证集正F1上不去。到了后面，实在没办法，选取了4个模型进行，对于难分类的问题进行了投票，结果0.55+，现在回想起来，或许不应该把中文的数据集冶金学投票，因为中文本身的F1就很高了，失误了。最后结束，问了别人，别人直接whisper+lora微调然后全量微调，就能到0.57以上了，哎，尴尬。<br>总结下来有两个失误，第一个失误：显卡资源不足。第二个失误：没有事先进行规划，应该先把主流的模型都跑一遍试一下的。第三个失误：最后专家投票时，不应该修改中文数据的标签。<br>雄关漫道真如铁，而今迈步从头越，靡不有初，鲜克有终。希望这股对生活的热情，和对工作的激情能一直保持下去。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/08/09/2.-%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E6%A8%A1%E5%9D%97-%E6%A2%85%E5%B0%94%E8%B0%B1%E5%9B%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -910,87 +992,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2023/04/17/%E6%B4%BB%E7%9D%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="李从奥">
-      <meta itemprop="description" content="李从奥的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杂记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/17/%E6%B4%BB%E7%9D%80/" class="post-title-link" itemprop="url">活着</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-17 20:05:26" itemprop="dateCreated datePublished" datetime="2023-04-17T20:05:26+08:00">2023-04-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>2023 04 09 吃朝鲜面撒一裤子，烫的腿在飞机上还疼。<br>2023 040 9 坐飞机，遇上气流颠簸，吭哧吭哧差点die（差点吐）。<br>2023 04 09 坐飞机，睡觉的时候跟旁边的人头碰头，看旁边人的腿（好白）。<br>2023 04 09 穿棒球服挤地铁，差点热死，还好有帅哥让座。<br>2023 04 09 穿着拖鞋+大裤衩出门。<br>2023 04 09 膝盖莫名出现淤青。<br>2023 04 09 170就跑，190就放慢步伐等着来加微信。<br>2023 04 10 那天上课，我两手插兜，啥也没带，就带了一盒奶。<br>2023 04 10 上课的时候，小爱同学被叫出来了，被全班大笑，还好嫁祸给了舍友琪琪。<br>2023 04 10 上课忘带水杯，一上午一口水没喝。<br>2023 04 10 第一天上课就想退学。<br>2023 04 10 中午没睡着，身体不舒服，下午心脏突突的（猝死（bushi））。<br>2023 04 10 有人问我cpa，给我问烦了。<br>2023 04 11 食堂一楼没人，三楼爆满，我去了三楼。。。<br>2023 04 12 后面坐着了一堆讲话温温柔柔的台湾同学。<br>2023 04 12 老师上课说：天行健，君子以自强不息，喝下午茶虚度光阴。感觉自己被骂了。<br>2023 04 12 老师上课说：论文盲审很难过。<br>2023 04 12 有一个当兵的同学，把照片传到我的平板上了。<br>2023 04 12 怀孕了又打胎了。<br>2023 04 13 坐车去主校区，丢了伞。<br>2023 04 13 发现不用过表。<br>2023 04 13 图书馆指引员小哥哥好帅。<br>2023 04 13 晚上emo，出门吹风。<br>2023 04 14 感冒了，打喷嚏流鼻涕。<br>2023 04 14 发现水杯没了，水杯忘在医务室了。<br>2023 04 14 穿裙子做空调旁边，快被冻死了。<br>2023 04 15 打喷嚏流鼻涕+流眼泪。<br>2023 04 15 写字太用力，右手食指指甲前端劈了。<br>2023 04 16 半夜来姨妈了。<br>2023 04 16 耳钉弄没了，还好后来找到了。<br>2023 04 16 左手指甲劈了。<br>2023 04 16 肚子疼。<br>2023 04 17 上厕所被隔壁敲墙，吓了一跳。<br>2023 04 17 开始咳嗽。<br>2023 04 17 指甲又劈了一个。<br>2023 04 17 emo胖了。<br>2023 04 18 肚子疼<br>2023 04 18 做噩梦了，被迫嫁给渣男。<br>2023 04 18 说梦话特别怕说出不该说的。<br>2023 04 18 做的题全错了。<br>2023 04 18 给我看了老太太样子的丑照。<br>2023 04 18 减肥计划今天搁浅了，吃了麻辣香锅。<br>2023 04 18 非要看我哭。<br>2023 04 18 买了小裙子，喝了糖水。<br>2023 04 18 之前有人送了一个超级大蛋糕。<br>2023 04 19 发朋友圈想吃汉堡。<br>2023 04 19 认识了4个港澳台的男生，长得很好看。<br>2023 04 19 看喜欢你。<br>2023 04 19 吃麦当劳。<br>2023 04 19 吃片装芝士会恶心。<br>2023 04 19 在床上张着大嘴等着舍友喂松饼。<br>2023 04 19 抽签抽到了最难的部分，个人所得税，还好不是组长。<br>2023 04 19 勾引学习委员。<br>2023 04 19 妈妈今天想我了。<br>2023 04 19 看擦边视频。<br>2023 04 20 早上忘吃早饭差点饿死。<br>2023 04 20 忘记干小组的活了，怕被组长弄死。<br>2023 04 20 去丘大叔学习，没带充电器，没带水。<br>2023 04 20 答应我5年之后，给她染头，这条很重要！！！！！！！<br>2023 04 20 心疼小朱。<br>2023 04 21 让我请她和敌敌畏。<br>2023 04 21 被老师说联机打游戏，还好穿的白色衣服没被叫起来。<br>2023 04 21 约定好5月15日之前不吃雪糕。<br>2023 04 21 被蚊子咬的体无完肤。<br>2023 04 22 嫌弃我找的东西不好。<br>2023 04 22 给我报告了蹲坑时间。<br>2023 04 22 发朋友圈找人官宣。<br>2023 04 23 新耳坠  吃海底捞。<br>2023 04 23 图书馆学习遇到帅哥，想加好友，不敢上。<br>2023 04 24 要跟别人去潮州玩。<br>2023 04 24 妈妈说我胖了一圈，问我是不是恋爱了，我emo了。<br>2023 04 25 外套找不到，又没带伞，被雨淋了。<br>2023 04 25 丘大叔好难喝。<br>2023 04 25 订单可能候补不到了。<br>2023 04 25 眼屎瑞凶我。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1060,14 +1061,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

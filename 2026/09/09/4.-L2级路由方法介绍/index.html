@@ -20,17 +20,19 @@
     var CONFIG = {"hostname":"lcarecordlife.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="李从奥的个人博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="杂记">
-<meta property="og:url" content="https://lcarecordlife.cn/archives/2024/08/index.html">
+  <meta name="description" content="目前计划的 L2 级路由整体采用两阶段决策机制。第一阶段为基于规则的预筛选阶段，主要针对数字、公式、实体以及部分特定业务场景进行识别。当输入命中预先配置的关键词、模式或场景规则时，认为该类样本具有较高的 LLM 纠错收益，因此不再经过后续置信度模型判断，而是直接调用 LLM 进行二次纠错。该阶段主要用于优先覆盖 LLM 收益较为明确的高价值场景，减少后续模型的决策压力。 对于未命中第一阶段规则的样">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4. L2级路由方法介绍">
+<meta property="og:url" content="https://lcarecordlife.cn/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/index.html">
 <meta property="og:site_name" content="杂记">
-<meta property="og:description" content="李从奥的个人博客">
+<meta property="og:description" content="目前计划的 L2 级路由整体采用两阶段决策机制。第一阶段为基于规则的预筛选阶段，主要针对数字、公式、实体以及部分特定业务场景进行识别。当输入命中预先配置的关键词、模式或场景规则时，认为该类样本具有较高的 LLM 纠错收益，因此不再经过后续置信度模型判断，而是直接调用 LLM 进行二次纠错。该阶段主要用于优先覆盖 LLM 收益较为明确的高价值场景，减少后续模型的决策压力。 对于未命中第一阶段规则的样">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-09T13:22:00.000Z">
+<meta property="article:modified_time" content="2026-09-09T14:20:55.256Z">
 <meta property="article:author" content="李从奥">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://lcarecordlife.cn/archives/2024/08/">
+<link rel="canonical" href="https://lcarecordlife.cn/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/">
 
 
 <script id="page-configurations">
@@ -38,12 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | 杂记</title>
+  <title>4. L2级路由方法介绍 | 杂记</title>
   
 
 
@@ -152,57 +154,144 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        
-        <span class="collection-header">还行! 目前共计 36 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="李从奥">
+      <meta itemprop="description" content="李从奥的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杂记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4. L2级路由方法介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-09-09 21:22:00 / 修改时间：22:20:55" itemprop="dateCreated datePublished" datetime="2026-09-09T21:22:00+08:00">2026-09-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E5%BC%95%E6%93%8E/" itemprop="url" rel="index"><span itemprop="name">语音识别引擎</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-08-07T21:53:26+08:00"
-              content="2024-08-07">
-          08-07
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/08/07/%E8%BF%91%E6%9C%9F%E6%84%9F%E6%83%B3/" itemprop="url">
-            <span itemprop="name">近期感想</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        <p>目前计划的 L2 级路由整体采用两阶段决策机制。第一阶段为基于规则的预筛选阶段，主要针对数字、公式、实体以及部分特定业务场景进行识别。当输入命中预先配置的关键词、模式或场景规则时，认为该类样本具有较高的 LLM 纠错收益，因此不再经过后续置信度模型判断，而是直接调用 LLM 进行二次纠错。该阶段主要用于优先覆盖 LLM 收益较为明确的高价值场景，减少后续模型的决策压力。</p>
+<p>对于未命中第一阶段规则的样本，则进入第二阶段的置信度路由模型。当前计划采用 LightGBM 作为主要分类模型，同时也可以进一步探索其他置信度估计模型。模型根据 ED 解码过程、N-best 候选、RAG 检索结果以及声学信息等多维特征，对当前 ED 识别结果的可靠程度进行综合打分。模型输出一个连续置信度分数，并通过预设阈值完成最终路由决策。当模型得分高于阈值时，认为当前 ED 结果已经具有较高可信度，无需继续调用 LLM，直接输出 ED 结果；当得分低于阈值时，则认为 ED 结果存在较大的潜在错误风险，进一步调用 LLM 进行纠错。</p>
+<p>因此，整个 L2 路由的核心问题可以归纳为：如何尽可能准确地判断当前 ED 结果是否已经足够可靠，从而在保证识别准确率的前提下减少不必要的 LLM 调用。 在这一过程中，置信度模型所使用的特征质量将直接影响最终的路由效果。</p>
+<p>现有 ASR 置信度估计方法通常会利用 Decoder、Beam Search 或 CTC 解码过程中产生的概率、得分以及候选分布信息，例如 Top1 与 Top2 的分数差、Beam 分布熵、token posterior、N-best 一致性等。这些信息能够从不同角度反映模型在解码过程中的确定程度。但仅依赖单一的 Decoder 得分往往难以完整描述一个识别结果是否可靠，因此当前 Router 在传统解码分数的基础上，进一步引入了文本、语义、声学、Beam Search 以及 RAG 检索等多源特征。</p>
+<p>当前使用的特征主要包括 semantic_distance、text_distance 和 faNorm_distance，分别用于衡量 N-best 候选在语义、文本和声学层面的离散程度；EntityMissRate 用于描述关键实体信息的缺失情况；ed_top1_top2_avg_gap、ed_beam_dist_entropy 和 ed_top1_switch_rate 用于描述 Decoder Beam Search 过程中候选之间的竞争程度和搜索稳定性；同时利用 rag_top1_score、rag_top1_top2_gap、rag_recall_count、rag_score_mean、rag_score_std 和 rag_score_sum 等特征描述外部检索结果的置信度及分布情况。</p>
+<p>后续还计划继续补充 CTC 与 Decoder 的跨分支一致性特征，以及 Decoder token-level 的 score、rank 等 SR-CEM 类特征，使 Router 不再只依赖最终 N-best 结果，而能够进一步利用解码过程中的动态置信度信息。例如，CTC 与 Decoder 最终结果的一致程度可以反映不同解码分支之间是否形成一致判断，而 token score、token rank 等特征则能够刻画 Decoder 在逐 token 生成过程中的局部稳定性。</p>
+<p>最终希望形成一套由声学一致性、文本一致性、语义一致性、搜索稳定性、CTC 置信度以及外部知识检索置信度共同组成的多维特征体系，并基于这些特征训练 LGB Router。通过调整模型阈值，可以在最终识别准确率与 LLM 调用率之间取得合适的平衡，从而实现“容易样本直接使用 ED，困难样本调用 LLM”的自适应路由机制。</p>
 
     </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>嘿嘿嘿，学校食堂太贵了，我快吃不饱饭了。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="李从奥 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="李从奥 支付宝">
+        <p>支付宝</p>
+      </div>
+
   </div>
-  
-  
-  
+</div>
 
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/09/08/%E5%90%88%E8%82%A5%E5%B8%82%E9%AB%98%E6%96%B0%E5%8C%BA%E8%81%8C%E5%B7%A5%E7%BE%BD%E6%AF%9B%E7%90%83%E6%AF%94%E8%B5%9B%E5%B0%8F%E8%AE%B0/" rel="prev" title="合肥市高新区职工羽毛球比赛小记">
+      <i class="fa fa-chevron-left"></i> 合肥市高新区职工羽毛球比赛小记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
 
           </div>
           
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NDI4Ny8zMDc1OA=="></div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -424,6 +513,21 @@ $(document).ready(function() {
 
   
 
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
 
 </body>
 </html>

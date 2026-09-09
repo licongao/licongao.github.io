@@ -158,6 +158,94 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="李从奥">
+      <meta itemprop="description" content="李从奥的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杂记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">4. L2级路由方法介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-09-09 21:22:00 / 修改时间：22:20:55" itemprop="dateCreated datePublished" datetime="2026-09-09T21:22:00+08:00">2026-09-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E5%BC%95%E6%93%8E/" itemprop="url" rel="index"><span itemprop="name">语音识别引擎</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>目前计划的 L2 级路由整体采用两阶段决策机制。第一阶段为基于规则的预筛选阶段，主要针对数字、公式、实体以及部分特定业务场景进行识别。当输入命中预先配置的关键词、模式或场景规则时，认为该类样本具有较高的 LLM 纠错收益，因此不再经过后续置信度模型判断，而是直接调用 LLM 进行二次纠错。该阶段主要用于优先覆盖 LLM 收益较为明确的高价值场景，减少后续模型的决策压力。</p>
+<p>对于未命中第一阶段规则的样本，则进入第二阶段的置信度路由模型。当前计划采用 LightGBM 作为主要分类模型，同时也可以进一步探索其他置信度估计模型。模型根据 ED 解码过程、N-best 候选、RAG 检索结果以及声学信息等多维特征，对当前 ED 识别结果的可靠程度进行综合打分。模型输出一个连续置信度分数，并通过预设阈值完成最终路由决策。当模型得分高于阈值时，认为当前 ED 结果已经具有较高可信度，无需继续调用 LLM，直接输出 ED 结果；当得分低于阈值时，则认为 ED 结果存在较大的潜在错误风险，进一步调用 LLM 进行纠错。</p>
+<p>因此，整个 L2 路由的核心问题可以归纳为：如何尽可能准确地判断当前 ED 结果是否已经足够可靠，从而在保证识别准确率的前提下减少不必要的 LLM 调用。 在这一过程中，置信度模型所使用的特征质量将直接影响最终的路由效果。</p>
+<p>现有 ASR 置信度估计方法通常会利用 Decoder、Beam Search 或 CTC 解码过程中产生的概率、得分以及候选分布信息，例如 Top1 与 Top2 的分数差、Beam 分布熵、token posterior、N-best 一致性等。这些信息能够从不同角度反映模型在解码过程中的确定程度。但仅依赖单一的 Decoder 得分往往难以完整描述一个识别结果是否可靠，因此当前 Router 在传统解码分数的基础上，进一步引入了文本、语义、声学、Beam Search 以及 RAG 检索等多源特征。</p>
+<p>当前使用的特征主要包括 semantic_distance、text_distance 和 faNorm_distance，分别用于衡量 N-best 候选在语义、文本和声学层面的离散程度；EntityMissRate 用于描述关键实体信息的缺失情况；ed_top1_top2_avg_gap、ed_beam_dist_entropy 和 ed_top1_switch_rate 用于描述 Decoder Beam Search 过程中候选之间的竞争程度和搜索稳定性；同时利用 rag_top1_score、rag_top1_top2_gap、rag_recall_count、rag_score_mean、rag_score_std 和 rag_score_sum 等特征描述外部检索结果的置信度及分布情况。</p>
+<p>后续还计划继续补充 CTC 与 Decoder 的跨分支一致性特征，以及 Decoder token-level 的 score、rank 等 SR-CEM 类特征，使 Router 不再只依赖最终 N-best 结果，而能够进一步利用解码过程中的动态置信度信息。例如，CTC 与 Decoder 最终结果的一致程度可以反映不同解码分支之间是否形成一致判断，而 token score、token rank 等特征则能够刻画 Decoder 在逐 token 生成过程中的局部稳定性。</p>
+<p>最终希望形成一套由声学一致性、文本一致性、语义一致性、搜索稳定性、CTC 置信度以及外部知识检索置信度共同组成的多维特征体系，并基于这些特征训练 LGB Router。通过调整模型阈值，可以在最终识别准确率与 LLM 调用率之间取得合适的平衡，从而实现“容易样本直接使用 ED，困难样本调用 LLM”的自适应路由机制。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/09/08/%E5%90%88%E8%82%A5%E5%B8%82%E9%AB%98%E6%96%B0%E5%8C%BA%E8%81%8C%E5%B7%A5%E7%BE%BD%E6%AF%9B%E7%90%83%E6%AF%94%E8%B5%9B%E5%B0%8F%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -952,90 +1040,6 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2025/05/15/%E6%9A%91%E6%9C%9F%E5%AE%9E%E4%B9%A0%E6%8A%95%E9%80%92%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="李从奥">
-      <meta itemprop="description" content="李从奥的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杂记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/05/15/%E6%9A%91%E6%9C%9F%E5%AE%9E%E4%B9%A0%E6%8A%95%E9%80%92%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">暑期实习投递总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-05-15 11:59:16" itemprop="dateCreated datePublished" datetime="2025-05-15T11:59:16+08:00">2025-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B1%82%E8%81%8C/" itemprop="url" rel="index"><span itemprop="name">求职</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>138</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>目前基本完成了暑期实习的投递，拿到了oppo健康算法以及华为终端bg算法的offer。<br>
-腾讯二面挂，京东字节简历挂，联想终面挂。<br>
-目前决定去oppo，感觉未来发展的前景会好一些，但是oppo是在深圳，地理位置不是特别理想，不知道未来去向何方~<br>
-走一步看一步，计划先去oppo试试看。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1105,7 +1109,7 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1154,12 +1158,12 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">30k</span>
+    <span title="站点总字数">31k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">27 分钟</span>
+    <span title="站点阅读时长">28 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

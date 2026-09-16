@@ -158,6 +158,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/09/16/5.-%E8%B7%AF%E7%94%B1%E6%96%B9%E6%A1%88%E7%89%B9%E5%BE%81%E8%A1%A5%E5%85%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="李从奥">
+      <meta itemprop="description" content="李从奥的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杂记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/09/16/5.-%E8%B7%AF%E7%94%B1%E6%96%B9%E6%A1%88%E7%89%B9%E5%BE%81%E8%A1%A5%E5%85%85/" class="post-title-link" itemprop="url">5. 路由方案特征补充</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-09-16 20:42:00 / 修改时间：21:01:36" itemprop="dateCreated datePublished" datetime="2026-09-16T20:42:00+08:00">2026-09-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E5%BC%95%E6%93%8E/" itemprop="url" rel="index"><span itemprop="name">语音识别引擎</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>近期工作主要围绕云端 L2 Router 的识别效果优化与 LLM 调用率压降展开。当前整体云端识别的LLM调用率已经明显下降了，但是与此同时字准也发生了明显的下降，因此需要先提升字准，看在字准不变的情况下，如何保证LLM调用率的下降。围绕这一目标，近期主要从特征增强、训练目标优化、错误样本分析以及专项预筛几个方向进行了推进。</p>
+<p>首先，在 Router 特征侧新增了 CTC32 与 ED 结果一致性特征。原有 Router 特征主要来源于 ED N-best、Decoder Beam 搜索过程、FA 声学匹配以及 RAG 检索结果，能够描述候选之间的文本、语义、声学以及搜索稳定性，但缺少不同识别分支之间的一致性信息。因此新增 ctc_ed_sim，用于衡量 CTC32 直接识别结果与 ED/Decoder 最终结果之间的相似程度。该特征本质上反映了模型内部不同解码分支之间是否达成一致：当 CTC 与 ED 结果高度一致时，通常表示识别结果较稳定；而当两者存在明显差异时，则说明模型内部对当前音频存在一定分歧，后续调用 LLM 可能具有更高收益。从实际 LightGBM 特征重要性结果来看，ctc_ed_sim 的 Gain 已进入前列，说明跨分支一致性信息确实能够为 Router 提供新的有效判别信息，也验证了这一特征设计方向的合理性。但是通过具体的实验结果看出，加入ctc32结果后，效果并不及预期，有所提高，但是不多，因此暂时舍弃了这个特征。</p>
+<p>在阅读论文SR-CEM后，参考这个论文的思路：Decoder token-level score 特征。之前的 Decoder 特征主要包括 ed_top1_top2_avg_gap、ed_beam_dist_entropy 和 ed_top1_switch_rate，这些特征主要描述的是 Beam Search 层面的整体竞争情况，例如 Top1 与 Top2 的分数差距、多个 beam 之间的分布熵以及 Top1 路径切换频率。这些特征在当前模型中重要性一直较高，但它们更多反映的是“搜索空间整体稳定不稳定”，并没有直接描述最终 winning path 上每一个 token 的局部质量。因此参考 SR-CEM 中利用 token score 和路径上下文进行置信度估计的思路，在 ED_dec_simple_imp.cpp 中沿最终 getMaxPath() 的 winning path 回溯，通过 pPrePath_ 获取每一个真实 token 对应的 fStepScore_，并基于这些局部 step score 构造了三个句级特征：ts_score_mean、ts_score_min 和 ts_suffix_avg。其中，ts_score_mean 表示最终最优路径中所有真实 token 局部得分的平均值，用于衡量整句路径的总体质量；ts_score_min 用于捕获整句话中得分最低、最不稳定的 token，解决“整句平均很高但某一个字非常危险”的问题；ts_suffix_avg 则进一步统计各位置之后 token 的平均得分，并对整句进行聚合，用于刻画 winning path 在后续生成过程中的稳定性。相比原有的 Beam Gap、Entropy 等统计量，这一组特征把 Router 的信息粒度从 beam-level 进一步深入到了 token-level。</p>
+<p>同时，对现有 Beam 特征也重新进行了分布与有效性分析。以 ed_beam_dist_entropy 为例，在 7-beam 场景下理论最大熵为：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>H</mi><mi>max</mi><mo>⁡</mo></msub><mo>=</mo><mi>ln</mi><mo>⁡</mo><mn>7</mn><mo>≈</mo><mn>1.946</mn></mrow><annotation encoding="application/x-tex">H_{\max}=\ln 7\approx1.946 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">a</span><span class="mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mop">ln</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">7</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.946</span></span></span></span></span></p>
+<p>实际数据中发现约 97% 的 entropy 都集中在 1.4～1.95 的高位区间。针对这一现象，进一步分析了是否需要将熵归一化到 0～1。结论是，对 LightGBM 来说，是否归一化并不是核心问题，因为树模型主要依赖特征排序和切分点，线性缩放并不会增加新的判别信息。真正需要关注的是高熵区间内部是否仍然能够区分 LLM Benefit 样本和 No-Benefit 样本。从当前特征 Gain 排名来看，ed_beam_dist_entropy 仍然处于非常靠前的位置，说明即使整体分布集中在高位区间，LightGBM 仍然可以在 1.4～1.95 内部找到有效切分点，因此目前没有必要为了数值范围强行归一化。</p>
+<p>进一步分析错误 case 后，发现一个比较突出的专项问题来自 数字、符号和书写规范化场景。例如：</p>
+<p>五点五英寸 → 5.5英寸<br>
+百分之零点三三 → 0.33%<br>
+九的立方 → 9³<br>
+一百除以零点五 → 100÷0.5<br>
+三十八点六摄氏度 → 38.6℃</p>
+<p>这类 case 的特点是：从传统 ASR 声学识别角度看，ED 其实可能是正确的，甚至 CTC、Decoder、FA 等内部置信信号都非常稳定，但是最终 benchmark 或业务要求希望输出更规范的书写形式。因此，这类错误并不是传统 ASR confidence 特征能够很好区分的，本质上更接近 Normalization Risk，也就是“当前文本虽然声学识别正确，但存在较高概率需要数字、单位、符号、日期、时间、公式等书写规范化”。因此加入了预筛选的逻辑，将这些任务直接送到LLM中。</p>
+<p>在现有模型效果分析方面，也对当前约 70% 的 LLM 调用率进行了进一步拆解。通过比较 ED 和 LLM 最终文本，发现仍然存在大量 ED 与 LLM 完全一致、或者仅存在标点差异的样本。这意味着当前仍然有相当一部分 LLM 调用实际上没有带来任何实质性收益。从统计角度看，这部分样本就是后续继续降低调用率的主要空间。另一方面，对当前已经被 Router 省掉的 LLM 调用进行分析后，也发现真正存在非标点实质文本差异的比例相对较低，说明当前 Router 在保证字准的前提下已经具备一定的安全降调用能力，但对“可无损省调用”样本的覆盖仍然不足。加入该类特征（3种）后，字准上升到96.68%已经超过了基线！但是LLM调用率升高到了70%左右（仍低于基线的95%左右）。</p>
+<p>另外，对整个 ASR 引擎内部多个模块进行重新梳理，包括 ED Decoder、Simple Decoder、FA、FSA、LM、PGS 等模块之间的关系。对 FA 的理解进一步明确：FA 本质上是 Forced Alignment 强制对齐模块，在候选文本已经确定的前提下，利用 Encoder/声学头提供的帧级声学信息，在固定文本顺序约束下寻找最佳时间对齐路径，并输出对应的声学匹配分。因此 FA 更适合作为“候选文本是否与当前音频声学一致”的判断依据，而不是判断文本语义或者书写规范是否正确。FSA 则主要作为热词、领域词、通讯录等定制场景下的受约束搜索模块，通过预定义有限状态图产生候选，并与 ED、FA、LM 等结果进行 PK。通过这部分梳理，对当前 Router 各个特征的来源和物理含义也更加明确。</p>
+<p>当前阶段的核心目标已经比较明确：云端整体字准已经达到要求，后续不再以单纯提高字准为主要目标，而是重点研究如何识别“LLM 无收益”的请求，在保证最终识别准确率不下降的前提下，将当前约 70% 的 LLM 调用率继续向更低水平压缩。</p>
+<p>后续准备重点推进三项工作。第一，基于现有模型进行完整 threshold sweep，建立 Final Accuracy - LLM Call Rate 曲线，确认当前模型本身还有多少仅靠阈值调整即可释放的降调用空间；第二，基于新的 LLM Benefit Label 重构 Router V2 数据集并重新训练，重点提高对 ED≈LLM、LLM无收益 等样本的识别能力；第三，完成 Normalization Risk 预筛模型，对数字、单位、时间、日期、运算符、特殊符号等场景进行专项保护，考虑使用 Char TF-IDF + Logistic Regression 作为轻量文本分类模型，使主 Router 在普通样本上能够采用更激进的省调用策略。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2026/09/09/4.-L2%E7%BA%A7%E8%B7%AF%E7%94%B1%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -954,92 +1053,6 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lcarecordlife.cn/2025/11/04/%E7%A7%8B%E6%8B%9B%E6%9C%89%E6%84%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="李从奥">
-      <meta itemprop="description" content="李从奥的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杂记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/11/04/%E7%A7%8B%E6%8B%9B%E6%9C%89%E6%84%9F/" class="post-title-link" itemprop="url">秋招有感</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-11-04 22:50:16" itemprop="dateCreated datePublished" datetime="2025-11-04T22:50:16+08:00">2025-11-04</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B1%82%E8%81%8C/" itemprop="url" rel="index"><span itemprop="name">求职</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>611</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>经过了6-8月的实习，顺利拿到了oppo的offer</p>
-<p>拒掉了比亚迪 海康 迈瑞。目前比较心仪的地点是：京东  歌尔  东源 科大讯飞 这四家，都是声学行业。华为也在池子里面泡着。主要考虑的因素是：城市，行业是否长就，公司是否稳定，以及更新换代速度。 不去oppo的主要考量在于城市，深圳距离太远，且是南方城市，过于潮湿，未来行业发展比较受限，跳槽较难，只能去部分手表企业（运动健康的算法），此时我的竞争对手是生医工的，我的声学背景无用武之地。不确定是否能持续工作10年以上。</p>
-<p>声学领域：稳定性强，风险集中在技术替代。未来耳机是否会被眼镜所替代呢？车内音响仍然是一个稳定的增长点，工作稳定。</p>
-<p>运动健康算法领域：爆发性强，与AI结合更加紧密，交叉创新市场更加的广阔。同时竞争对手也会更加多。</p>
-<p>在写这篇博客的时候，我感觉这两个行业都是不错的行业，回归本质都是消费电子的领域，所以要具体对比的就是公司的待遇问题，以及离家远近的问题了。正是所谓的幸福度。我可以在一个短期内（3-5年）努力奋斗，提升专业的技能，但是聚焦到长期，依靠一笔固定的工资，难以实现自己的财富自由，学会投资是一门必修课，这也就反映了，我需要一个较为安逸的工作，让我在工作之余，有精力去研究制定自己的投资计划，或者说有能力去做一下副业。</p>
-<p>暂时是这样，我当前的眼界还是很有限的，看不到更远的方向。短期来看，找一个较为高薪的工作，并在工作之余提升自己，给自己的未来提供一些选择的机会总还是好的。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1109,7 +1122,7 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1158,12 +1171,12 @@ Compute()-&gt;包含：FrameSignal() ApplyWindow() FFT() MelFilterBank() Log()</
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">31k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">28 分钟</span>
+    <span title="站点阅读时长">31 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
